@@ -15,7 +15,7 @@ or if you want to switch the origin and destination:
 
 I have mine running through cron in the following command:
 
-*/5 5-10 1-5 * * <path to python> <path to data file>
+*/5 5-10 * * 1-5 <path to python> <path to data file>
 '''
 
 import urllib2
@@ -32,7 +32,7 @@ destination = "777+Mariners+Island+Blvd,+San+Mateo,+CA+94404"
 def main():
     data_file = sys.argv[1]
     # Get the response from google with transit times
-    if len(sys.argv) >= 2 and sys.argv[2] == "-switch":
+    if len(sys.argv) >= 3 and sys.argv[2] == "-switch":
         url = "https://www.google.com/maps/dir/" + destination + "/" + origin + "/"
     else:
         url = "https://www.google.com/maps/dir/" + origin + "/" + destination + "/"
@@ -52,7 +52,7 @@ def main():
         if time_int < min:
             shortest_time = time_int
     # Write to data file
-    with open(data_file, "a") as data:
+    with open(data_file, "a+") as data:
         time = datetime.now().strftime("%Y-%m-%d %H:%M")
         weekday = datetime.today().weekday()
         data_list = [time, weekday, shortest_time]

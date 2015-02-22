@@ -10,4 +10,4 @@ or if you want to switch the origin and destination:
 
 I have mine running through cron in the following command:
 
-*/5 5-10 * * 1-5 <path to python> <path to data file>
+*/5 5-10 * * 1-5 \<path to python\> \<path to commute_times.py\> \<path to data file\>

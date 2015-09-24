@@ -25,7 +25,7 @@ import json
 import config
 from datetime import datetime
 
-DEBUG = True
+DEBUG = False
 
 def get_time(switch):
     if switch:

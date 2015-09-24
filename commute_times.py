@@ -25,29 +25,36 @@ import json
 import config
 from datetime import datetime
 
-DEBUG = False
+DEBUG = True
 
-def main():
-    data_file = sys.argv[1]
-    # Get the response from google with transit times
-    if len(sys.argv) >= 3 and sys.argv[2] == "-switch":
-        url = "http://www.mapquestapi.com/directions/v2/route?key=" + config.mapquest_key + "&from=" + config.destination + "&to=" + config.origin
+def get_time(switch):
+    if switch:
+        url = "http://www.mapquestapi.com/directions/v2/route?key=" + \
+              config.mapquest_key + "&from=" + config.destination + "&to=" + config.origin
     else:
-        url = "http://www.mapquestapi.com/directions/v2/route?key=" + config.mapquest_key + "&from=" + config.origin + "&to=" + config.destination
+        url = "http://www.mapquestapi.com/directions/v2/route?key=" + \
+              config.mapquest_key + "&from=" + config.origin + "&to=" + config.destination
     response = urllib2.urlopen(url)
     json_response = response.read()
-    # Find transit times from google
     json_data = json.loads(json_response)
     time = json_data["route"]["realTime"];
     if DEBUG:
-        print time
+        print "URL: " + url
+        print "Response: " + json_response
+        print "Time: " + str(time)
+    return time
+
+def write_time_to_file(data_file, shortest_time):
     # Write to data file
     with open(data_file, "a+") as data:
-        now_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+        now_time = datetime.now().strftime("%Y-%m-%d,%H:%M")
         weekday = datetime.today().weekday()
-        data_list = [now_time, weekday, time]
+        data_list = [now_time, weekday, shortest_time]
         data_list = map(str, data_list)
         data.write(",".join(data_list) + "\n")
     
 if __name__ == '__main__':
-    main()
+    data_file = sys.argv[1]
+    switch = len(sys.argv) >= 3 and sys.argv[2] == "-switch"
+    shortest_time = get_time(switch)
+    write_time_to_file(data_file, shortest_time)

@@ -1,3 +1,6 @@
 .project
 .pydevproject
-
+config.py
+*.pyc
+*.csv
+*.xlsx

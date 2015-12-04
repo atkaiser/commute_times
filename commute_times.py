@@ -29,11 +29,12 @@ DEBUG = False
 
 def get_time(switch):
     if switch:
-        url = "http://www.mapquestapi.com/directions/v2/route?key=" + \
+        url = "http://www.mapquestapi.com/directions/v2/route?doReverseGeocode=false&key=" + \
               config.mapquest_key + "&from=" + config.destination + "&to=" + config.origin
     else:
-        url = "http://www.mapquestapi.com/directions/v2/route?key=" + \
+        url = "http://www.mapquestapi.com/directions/v2/route?doReverseGeocode=false&key=" + \
               config.mapquest_key + "&from=" + config.origin + "&to=" + config.destination
+              
     response = urllib2.urlopen(url)
     json_response = response.read()
     json_data = json.loads(json_response)
@@ -54,7 +55,9 @@ def write_time_to_file(data_file, shortest_time):
         data.write(",".join(data_list) + "\n")
     
 if __name__ == '__main__':
-    data_file = sys.argv[1]
+    if len(sys.argv) >= 2:
+        data_file = sys.argv[1]
     switch = len(sys.argv) >= 3 and sys.argv[2] == "-switch"
     shortest_time = get_time(switch)
-    write_time_to_file(data_file, shortest_time)
+    if len(sys.argv) >= 2:
+        write_time_to_file(data_file, shortest_time)

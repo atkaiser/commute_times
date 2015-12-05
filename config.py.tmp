@@ -1,3 +1,2 @@
-origin = <Place to start from lat,long>
-destination = <Place to go to lat,long>
-mapquest_key = <Mapquest key>
+origin = <Place to start from>
+destination = <Place to go to>

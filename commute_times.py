@@ -19,30 +19,43 @@ I have mine running through cron in the following command:
 */5 5-10 * * 1-5 <path to python> <path to data file>
 '''
 
-import urllib2
 import sys
-import json
-import config
+import requests
+import re
 from datetime import datetime
 
-DEBUG = False
+import config
+
+DEBUG = True
 
 def get_time(switch):
     if switch:
-        url = "http://www.mapquestapi.com/directions/v2/route?doReverseGeocode=false&key=" + \
-              config.mapquest_key + "&from=" + config.destination + "&to=" + config.origin
+        url = "http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+" + \
+              config.origin + "+from+" + config.destination
     else:
-        url = "http://www.mapquestapi.com/directions/v2/route?doReverseGeocode=false&key=" + \
-              config.mapquest_key + "&from=" + config.origin + "&to=" + config.destination
+        url = "http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+" + \
+              config.destination + "+from+" + config.origin
               
-    response = urllib2.urlopen(url)
-    json_response = response.read()
-    json_data = json.loads(json_response)
-    time = json_data["route"]["realTime"];
+    response = requests.get(url)
+    matches = re.findall('"[0-9 hr]+? min"', response.text)
+    print matches
+    match = matches[1]
+    time = time_from_string(match)
     if DEBUG:
         print "URL: " + url
-        print "Response: " + json_response
+        print "Match: " + match
+#         print "Response: " + json_response
         print "Time: " + str(time)
+    return time
+
+def time_from_string(match):
+    hours = 0
+    hour_match = re.search('(\d+) hr', match)
+    if hour_match:
+        hours = int(hour_match.group(1)) * 60
+    min_match = re.search('(\d+) min', match)
+    minutes = int(min_match.group(1))
+    time = minutes + hours
     return time
 
 def write_time_to_file(data_file, shortest_time):

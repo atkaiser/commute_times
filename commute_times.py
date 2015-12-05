@@ -28,14 +28,9 @@ import config
 
 DEBUG = True
 
-def get_time(switch):
-    if switch:
-        url = "http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+" + \
-              config.origin + "+from+" + config.destination
-    else:
-        url = "http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+" + \
-              config.destination + "+from+" + config.origin
-              
+def get_time(origin, destination):
+    url = "http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+" + \
+          origin + "+from+" + destination     
     response = requests.get(url)
     matches = re.findall('"[0-9 hr]+? min"', response.text)
     print matches
@@ -71,6 +66,9 @@ if __name__ == '__main__':
     if len(sys.argv) >= 2:
         data_file = sys.argv[1]
     switch = len(sys.argv) >= 3 and sys.argv[2] == "-switch"
-    shortest_time = get_time(switch)
+    if (switch):
+        shortest_time = get_time(switch, config.destination, config.origin)
+    else:
+        shortest_time = get_time(switch, config.origin, config.destination)
     if len(sys.argv) >= 2:
         write_time_to_file(data_file, shortest_time)

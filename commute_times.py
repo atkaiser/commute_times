@@ -30,7 +30,7 @@ DEBUG = True
 
 def get_time(origin, destination):
     url = "http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+" + \
-          origin + "+from+" + destination     
+          destination + "+from+" + origin
     response = requests.get(url)
     matches = re.findall('"[0-9 hr]+? min"', response.text)
     print matches
@@ -67,8 +67,8 @@ if __name__ == '__main__':
         data_file = sys.argv[1]
     switch = len(sys.argv) >= 3 and sys.argv[2] == "-switch"
     if (switch):
-        shortest_time = get_time(switch, config.destination, config.origin)
+        shortest_time = get_time(config.destination, config.origin)
     else:
-        shortest_time = get_time(switch, config.origin, config.destination)
+        shortest_time = get_time(config.origin, config.destination)
     if len(sys.argv) >= 2:
         write_time_to_file(data_file, shortest_time)

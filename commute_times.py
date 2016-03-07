@@ -33,13 +33,15 @@ def get_time(origin, destination):
           destination + "+from+" + origin
     response = requests.get(url)
     matches = re.findall('"[0-9 hr]+? min"', response.text)
-    print matches
-    match = matches[1]
-    time = time_from_string(match)
+    if matches:
+        match = matches[1]
+        time = time_from_string(match)
+    else:
+        time = -1
     if DEBUG:
         print "URL: " + url
-        print "Match: " + match
-#         print "Response: " + json_response
+#        print "Match: " + match
+#        print "Response: " + response.text
         print "Time: " + str(time)
     return time
 

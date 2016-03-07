@@ -3,8 +3,6 @@ Created on Dec 4, 2015
 
 @author: akaiser
 '''
-import random
-import string
 
 import cherrypy
 

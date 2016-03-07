@@ -2,12 +2,10 @@ A script to get the transit time between two locations.  Meant to be run many ti
 aggregate data at different times of the week.  Later it can be analyzed to determine what the best
 time to leave is. Run like:
 
-    python commute_times.py <data_file>
+    commute_times.py [-s] [-f DATA_FILE] origin dest
 
-or if you want to switch the origin and destination:
-
-    python commute_times.py <data_file> -switch
+The -s flag will switch the origin and destination.
 
 I have mine running through cron in the following command:
 
-*/5 5-10 * * 1-5 \<path to python\> \<path to commute_times.py\> \<path to data file\>
+*/5 5-10 * * 1-5 \<path to python\> \<path to commute_times.py\> \<origin\> \<dest\> \<path to data file\>

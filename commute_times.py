@@ -19,12 +19,10 @@ I have mine running through cron in the following command:
 */5 5-10 * * 1-5 <path to python> <path to data file>
 '''
 
-import sys
+import argparse
 import requests
 import re
 from datetime import datetime
-
-import config
 
 DEBUG = True
 
@@ -65,12 +63,15 @@ def write_time_to_file(data_file, shortest_time):
         data.write(",".join(data_list) + "\n")
     
 if __name__ == '__main__':
-    if len(sys.argv) >= 2:
-        data_file = sys.argv[1]
-    switch = len(sys.argv) >= 3 and sys.argv[2] == "-switch"
-    if (switch):
-        shortest_time = get_time(config.destination, config.origin)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("origin", help="Origin location")
+    parser.add_argument("dest", help="Destination location")
+    parser.add_argument("-s", "--switch", action="store_true")
+    parser.add_argument("-f", "--data_file", help="Append result to data file")
+    args = parser.parse_args()
+    if (args.switch):
+        shortest_time = get_time(args.dest, args.origin)
     else:
-        shortest_time = get_time(config.origin, config.destination)
-    if len(sys.argv) >= 2:
-        write_time_to_file(data_file, shortest_time)
+        shortest_time = get_time(args.origin, args.dest)
+    if args.data_file:
+        write_time_to_file(args.data_file, shortest_time)

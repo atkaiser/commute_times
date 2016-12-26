@@ -23,35 +23,58 @@ import argparse
 import requests
 import re
 from datetime import datetime
+from config import destination
 
 DEBUG = True
 
 def get_time(origin, destination):
-    url = "http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+" + \
-          destination + "+from+" + origin
-    response = requests.get(url)
-    matches = re.findall('"[0-9 hr]+? min"', response.text)
+    response = get_gdirections_response(origin, destination)
+    matches = re.findall('"((\d+ h)|(\d+ min)|(\d+ h \d+ min))"', response)
     if matches:
-        match = matches[1]
+        match = matches[1][0]
         time = time_from_string(match)
     else:
         time = -1
     if DEBUG:
-        print "URL: " + url
-#        print "Match: " + match
-#        print "Response: " + response.text
+        print "Match: " + match
         print "Time: " + str(time)
     return time
 
 def time_from_string(match):
     hours = 0
-    hour_match = re.search('(\d+) hr', match)
+    hour_match = re.search('(\d+) h', match)
     if hour_match:
         hours = int(hour_match.group(1)) * 60
     min_match = re.search('(\d+) min', match)
-    minutes = int(min_match.group(1))
+    if min_match:
+        minutes = int(min_match.group(1))
+    else:
+        minutes = 0
     time = minutes + hours
     return time
+
+# [[[["CA-92 W",[36369,"22.6 miles",1],[1660,"28 min"],0,null,null,[[1732,"29 min"],
+def get_route_name(origin, destination):
+    response = get_gdirections_response(origin, destination)
+    matches = re.search(r'\[\[\[\["(.*?)",\[\d+,"\d+.?\d* miles",\d+\],\[\d+,"((\d+ h)|(\d+ min)|(\d+ h \d+ min))"\],\d+,null,null,\[\[\d+,"((\d+ h)|(\d+ min)|(\d+ h \d+ min))"\]', response)
+    if matches:
+        route_name = matches.group(1)
+    else:
+        route_name = "Err"
+    if DEBUG:
+#         print "Response: " + "\n".join(response.splitlines()[0:50])
+        print "Match: " + matches.group()
+        print "Route Name: " + route_name
+        
+
+def get_gdirections_response(origin, destination):
+    url = "http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+" + \
+          destination + "+from+" + origin
+    response = requests.get(url)
+    if DEBUG:
+        print "URL: " + url
+#         print "Response: " + response.text
+    return response.text
 
 def write_time_to_file(data_file, shortest_time):
     # Write to data file
@@ -71,7 +94,9 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if (args.switch):
         shortest_time = get_time(args.dest, args.origin)
+        get_route_name(args.dest, args.origin)
     else:
         shortest_time = get_time(args.origin, args.dest)
-    if args.data_file:
-        write_time_to_file(args.data_file, shortest_time)
+        get_route_name(args.origin, args.dest)
+#     if args.data_file:
+#         write_time_to_file(args.data_file, shortest_time)

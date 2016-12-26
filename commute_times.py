@@ -23,9 +23,8 @@ import argparse
 import requests
 import re
 from datetime import datetime
-from config import destination
 
-DEBUG = True
+DEBUG = False
 
 def get_time(origin, destination):
     response = get_gdirections_response(origin, destination)
@@ -63,8 +62,9 @@ def get_route_name(origin, destination):
         route_name = "Err"
     if DEBUG:
 #         print "Response: " + "\n".join(response.splitlines()[0:50])
-        print "Match: " + matches.group()
+#        print "Match: " + matches.group()
         print "Route Name: " + route_name
+    return route_name
         
 
 def get_gdirections_response(origin, destination):
@@ -84,19 +84,34 @@ def write_time_to_file(data_file, shortest_time):
         data_list = [now_time, weekday, shortest_time]
         data_list = map(str, data_list)
         data.write(",".join(data_list) + "\n")
-    
+
+
+def write_route_to_file(file_name, shortest_time, route_name):
+    with open(file_name, "a+") as data:
+        now_time = datetime.now().strftime("%Y-%m-%d,%H:%M")
+        weekday = datetime.today().weekday()
+        data_list = [now_time, weekday, shortest_time, route_name]
+        data_list = map(str, data_list)
+        data.write(",".join(data_list) + "\n")
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("origin", help="Origin location")
     parser.add_argument("dest", help="Destination location")
     parser.add_argument("-s", "--switch", action="store_true")
     parser.add_argument("-f", "--data_file", help="Append result to data file")
+    parser.add_argument("-r", "--route", help="Print the best route")
     args = parser.parse_args()
     if (args.switch):
-        shortest_time = get_time(args.dest, args.origin)
-        get_route_name(args.dest, args.origin)
+        origin = args.dest
+        dest = args.origin
     else:
-        shortest_time = get_time(args.origin, args.dest)
-        get_route_name(args.origin, args.dest)
-#     if args.data_file:
-#         write_time_to_file(args.data_file, shortest_time)
+        origin = args.origin
+        dest = args.dest
+    shortest_time = get_time(origin, dest)
+    route_name = get_route_name(args.dest, args.origin)
+    if args.data_file:
+        write_time_to_file(args.data_file, shortest_time)
+    if args.route:
+        write_route_to_file(args.route, shortest_time, route_name)

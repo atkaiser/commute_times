@@ -61,8 +61,8 @@ def get_route_name(origin, destination):
     else:
         route_name = "Err"
     if DEBUG:
-#         print "Response: " + "\n".join(response.splitlines()[0:50])
-#        print "Match: " + matches.group()
+        print "Response: " + "\n".join(response.splitlines()[0:50])
+#         print "Match: " + matches.group()
         print "Route Name: " + route_name
     return route_name
         
@@ -110,7 +110,7 @@ if __name__ == '__main__':
         origin = args.origin
         dest = args.dest
     shortest_time = get_time(origin, dest)
-    route_name = get_route_name(args.dest, args.origin)
+    route_name = get_route_name(origin, dest)
     if args.data_file:
         write_time_to_file(args.data_file, shortest_time)
     if args.route:

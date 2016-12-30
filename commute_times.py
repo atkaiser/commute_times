@@ -20,24 +20,16 @@ I have mine running through cron in the following command:
 '''
 
 import argparse
-import requests
 import re
 from datetime import datetime
+import route
 
 DEBUG = False
 
 def get_time(origin, destination):
-    response = get_gdirections_response(origin, destination)
-    matches = re.findall('"((\d+ h)|(\d+ min)|(\d+ h \d+ min))"', response)
-    if matches:
-        match = matches[1][0]
-        time = time_from_string(match)
-    else:
-        time = -1
-    if DEBUG:
-        print "Match: " + match
-        print "Time: " + str(time)
-    return time
+    time_str, _, _ = route.get_time_and_route(origin, destination)
+    return time_from_string(time_str)
+    
 
 def time_from_string(match):
     hours = 0
@@ -52,29 +44,6 @@ def time_from_string(match):
     time = minutes + hours
     return time
 
-# [[[["CA-92 W",[36369,"22.6 miles",1],[1660,"28 min"],0,null,null,[[1732,"29 min"],
-def get_route_name(origin, destination):
-    response = get_gdirections_response(origin, destination)
-    matches = re.search(r'\[\[\[\["(.*?)",\[\d+,"\d+.?\d* miles",\d+\],\[\d+,"((\d+ h)|(\d+ min)|(\d+ h \d+ min))"\],\d+,null,null,\[\[\d+,"((\d+ h)|(\d+ min)|(\d+ h \d+ min))"\]', response)
-    if matches:
-        route_name = matches.group(1)
-    else:
-        route_name = "Err"
-    if DEBUG:
-        print "Response: " + "\n".join(response.splitlines()[0:50])
-#         print "Match: " + matches.group()
-        print "Route Name: " + route_name
-    return route_name
-        
-
-def get_gdirections_response(origin, destination):
-    url = "http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+" + \
-          destination + "+from+" + origin
-    response = requests.get(url)
-    if DEBUG:
-        print "URL: " + url
-#         print "Response: " + response.text
-    return response.text
 
 def write_time_to_file(data_file, shortest_time):
     # Write to data file
@@ -86,11 +55,12 @@ def write_time_to_file(data_file, shortest_time):
         data.write(",".join(data_list) + "\n")
 
 
-def write_route_to_file(file_name, shortest_time, route_name):
+def write_route_to_file(file_name, shortest_time, summary_route, detailed_route):
     with open(file_name, "a+") as data:
         now_time = datetime.now().strftime("%Y-%m-%d,%H:%M")
         weekday = datetime.today().weekday()
-        data_list = [now_time, weekday, shortest_time, route_name]
+        better_detailed_route = map(lambda x: x.split("\n")[0], detailed_route)
+        data_list = [now_time, weekday, time_str, time_from_string(time_str), summary_route, "||".join(better_detailed_route)]
         data_list = map(str, data_list)
         data.write(",".join(data_list) + "\n")
 
@@ -109,9 +79,8 @@ if __name__ == '__main__':
     else:
         origin = args.origin
         dest = args.dest
-    shortest_time = get_time(origin, dest)
-    route_name = get_route_name(origin, dest)
+    time_str, summary_route, detailed_route = route.get_time_and_route(origin, dest)
     if args.data_file:
-        write_time_to_file(args.data_file, shortest_time)
+        write_time_to_file(args.data_file, time_from_string(time_str))
     if args.route:
-        write_route_to_file(args.route, shortest_time, route_name)
+        write_route_to_file(args.route, time_str, summary_route, detailed_route)

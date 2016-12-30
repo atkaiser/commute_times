@@ -19,6 +19,7 @@ def get_time_and_route(origin, destination):
             time.sleep(1)
             elems = driver.find_elements_by_xpath('//button[text()=" Details "]')
         elem = elems[0]
+        time.sleep(1)
         elem.click()
         elems = driver.find_elements_by_xpath("//h1[@class='section-trip-summary-title']")
         while not elems:

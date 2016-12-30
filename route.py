@@ -1,6 +1,8 @@
 from selenium import webdriver
 import time
 from pyvirtualdisplay import Display
+import traceback
+import sys
 
 
 def get_time_and_route(origin, destination):
@@ -34,6 +36,7 @@ def get_time_and_route(origin, destination):
                 detailed_route.append(elem.text)
     except Exception as e:
         print(e)
+        traceback.print_exc(limit=100, file=sys.stdout)
     driver.quit()
     display.stop()
     return [time_str, summary_route, detailed_route]

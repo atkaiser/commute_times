@@ -33,7 +33,7 @@ def get_time(origin, destination):
 
 
 def all_info(origin, destination):
-    time_str, summary_route, detailed_route = route.get_time_and_route(origin, dest)
+    time_str, summary_route, detailed_route = route.get_time_and_route(origin, destination)
     data = {}
     data["time"] = str(time_from_string(time_str))
     data["summary_route"] = summary_route

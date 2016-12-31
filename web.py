@@ -7,6 +7,7 @@ Created on Dec 4, 2015
 import cherrypy
 
 from commute_times import get_time
+from commute_times import all_info
 
 class DirTimeWeb(object):
     @cherrypy.expose
@@ -20,6 +21,10 @@ class DirTimeWeb(object):
     @cherrypy.expose
     def time(self, origin, destination):
         return str(get_time(origin.replace(' ', '+'), destination.replace(' ', '+')))
+
+    @cherrypy.expose
+    def all_info(self, origin, destination):
+        return all_info(origin.replace(' ', '+'), destination.replace(' ', '+'))
 
 if __name__ == '__main__':
     cherrypy.config.update( {'server.socket_host': '0.0.0.0'} )

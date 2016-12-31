@@ -22,6 +22,7 @@ I have mine running through cron in the following command:
 import argparse
 import re
 from datetime import datetime
+import json
 import route
 
 DEBUG = False
@@ -29,6 +30,16 @@ DEBUG = False
 def get_time(origin, destination):
     time_str, _, _ = route.get_time_and_route(origin, destination)
     return time_from_string(time_str)
+
+
+def all_info(origin, destination):
+    time_str, summary_route, detailed_route = route.get_time_and_route(origin, dest)
+    data = {}
+    data["time"] = str(time_from_string(time_str))
+    data["summary_route"] = summary_route
+    better_detailed_route = map(lambda x: x.split("\n")[0], detailed_route)
+    data["detailed_route"] = "||".join(better_detailed_route)
+    return json.dumps(data)
     
 
 def time_from_string(match):

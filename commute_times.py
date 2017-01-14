@@ -91,6 +91,11 @@ if __name__ == '__main__':
         origin = args.origin
         dest = args.dest
     time_str, summary_route, detailed_route = route.get_time_and_route(origin, dest)
+    if not args.data_file and not args.route:
+        print("Time: " + time_str)
+        print("Summary route: " + summary_route)
+        better_detailed_route = map(lambda x: x.split("\n")[0], detailed_route)
+        print("Detailed route: " + "||".join(better_detailed_route))
     if args.data_file:
         write_time_to_file(args.data_file, time_from_string(time_str))
     if args.route:

@@ -9,3 +9,16 @@ The -s flag will switch the origin and destination.
 I have mine running through cron in the following command:
 
 */5 5-10 * * 1-5 \<path to python\> \<path to commute_times.py\> \<origin\> \<dest\> \<path to data file\>
+
+
+How to setup:
+
+sudo apt-get install xvfb
+<install chrome browser>
+
+pip install -r requirements.txt
+
+
+How to run the web service:
+
+nohup python web.py &> weblog.log &

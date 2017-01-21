@@ -1,0 +1,10 @@
+[Unit]
+Description=Commute times web server
+After=network.target
+
+[Service]
+User=akaiser
+ExecStart=/home/akaiser/.virtualenvs/commute_times/bin/python /home/akaiser/dev/commute_times/web.py
+
+[Install]
+WantedBy=multi-user.target

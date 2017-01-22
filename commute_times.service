@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 User=akaiser
-ExecStart=/home/akaiser/.virtualenvs/commute_times/bin/python /home/akaiser/dev/commute_times/web.py
+ExecStart=/bin/bash -c 'cd /home/akaiser/dev/commute_times; source ~/.virtualenvs/commute_times/bin/activate; python web.py'
 Restart=always
 
 [Install]

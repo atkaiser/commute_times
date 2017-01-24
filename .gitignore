@@ -5,3 +5,4 @@ config.py
 *.csv
 *.xlsx
 *.log
+data

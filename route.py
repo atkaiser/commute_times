@@ -17,7 +17,7 @@ class RouteFinder:
         while not RouteFinder.initiated and RouteFinder.drivers.qsize() < RouteFinder.pool_size:
             display = Display(visible=0, size=(1024, 768))
             display.start()
-            displays.append(display)
+            RouteFinder.displays.append(display)
             driver = webdriver.Chrome()
             driver.set_window_size(1024, 768)
             RouteFinder.drivers.put(driver)

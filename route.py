@@ -9,6 +9,7 @@ import queue
 class RouteFinder:
     
     drivers = queue.Queue()
+    displays = []
     pool_size = 2
     initiated = False
 
@@ -16,6 +17,7 @@ class RouteFinder:
         while not RouteFinder.initiated and RouteFinder.drivers.qsize() < RouteFinder.pool_size:
             display = Display(visible=0, size=(1024, 768))
             display.start()
+            displays.append(display)
             driver = webdriver.Chrome()
             driver.set_window_size(1024, 768)
             RouteFinder.drivers.put(driver)
@@ -54,6 +56,13 @@ class RouteFinder:
             traceback.print_exc(limit=100, file=sys.stdout)
         RouteFinder.drivers.put(driver)
         return [time_str, summary_route, detailed_route]
+    
+    def close(self):
+        while not RouteFinder.drivers.empty():
+            driver = RouteFinder.drivers.get()
+            driver.quit()
+        for display in RouteFinder.displays:
+            display.stop()
 
 if __name__ == "__main__":
     router = RouteFinder()

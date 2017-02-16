@@ -94,6 +94,7 @@ if __name__ == '__main__':
         dest = args.dest
     finder = RouteFinder()
     time_str, summary_route, detailed_route = finder.get_time_and_route(origin, dest)
+    finder.close()
     if not args.data_file and not args.route:
         print("Time: " + time_str)
         print("Summary route: " + summary_route)

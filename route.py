@@ -6,6 +6,8 @@ import sys
 import queue
 
 
+MAX_SLEEP_TIME = 60
+
 class RouteFinder:
     
     drivers = queue.Queue()
@@ -31,16 +33,24 @@ class RouteFinder:
         try:
             driver.get(url)
             elems = driver.find_elements_by_xpath('//button[text()=" Details "]')
+            sleep_time = 0
             while not elems:
                 time.sleep(1)
                 elems = driver.find_elements_by_xpath('//button[text()=" Details "]')
+                sleep_time += 1
+                if sleep_time > MAX_SLEEP_TIME:
+                    raise Exception("Couldn't find Details button")
             elem = elems[0]
             time.sleep(1)
             elem.click()
             elems = driver.find_elements_by_xpath("//h1[@class='section-trip-summary-title']")
+            sleep_time = 0
             while not elems:
                 time.sleep(1)
                 elems = driver.find_elements_by_xpath("//h1[@class='section-trip-summary-title']")
+                sleep_time += 1
+                if sleep_time > MAX_SLEEP_TIME:
+                    raise Exception("Couldn't find 'section-trip-summary-title'")
             elem = elems[0]
             time_str = elem.text
             elem = driver.find_element_by_xpath("//h1[@class='section-directions-trip-title']")
@@ -55,6 +65,12 @@ class RouteFinder:
             print(e)
             traceback.print_exc(limit=100, file=sys.stdout)
         RouteFinder.drivers.put(driver)
+        if not time_str:
+            time_str = -1
+        if not summary_route:
+            summary_route = ""
+        if not detailed_route:
+            detailed_route = ""
         return [time_str, summary_route, detailed_route]
     
     def close(self):

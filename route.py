@@ -1,14 +1,9 @@
 from selenium import webdriver
 import time
-from datetime import datetime
 from pyvirtualdisplay import Display
 import traceback
 import sys
 import queue
-import os
-import subprocess
-import re
-import signal
 
 
 MAX_SLEEP_TIME = 60

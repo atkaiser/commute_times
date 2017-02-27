@@ -12,11 +12,10 @@ class RouteFinder:
     
     drivers = queue.Queue()
     displays = []
-    pool_size = 2
     initiated = False
 
-    def __init__(self):
-        while not RouteFinder.initiated and RouteFinder.drivers.qsize() < RouteFinder.pool_size:
+    def __init__(self, pool_size):
+        while not RouteFinder.initiated and RouteFinder.drivers.qsize() < pool_size:
             display = Display(visible=0, size=(1024, 768))
             display.start()
             RouteFinder.displays.append(display)
@@ -80,8 +79,9 @@ class RouteFinder:
         for display in RouteFinder.displays:
             display.stop()
 
+
 if __name__ == "__main__":
-    router = RouteFinder()
+    router = RouteFinder(1)
     time_str, summary_route, detailed_route = router.get_time_and_route("777+Mariners+Island+Blvd,+San+Mateo,+CA+94404", "5024+Ray+Ave,+Castro+Valley,+CA+94546")
     print("Time: " + time_str)
     print("Summary route: " + summary_route)

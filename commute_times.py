@@ -28,13 +28,13 @@ from route import RouteFinder
 DEBUG = False
 
 def get_time(origin, destination):
-    finder = RouteFinder()
+    finder = RouteFinder(2)
     time_str, _, _ = finder.get_time_and_route(origin, destination)
     return time_from_string(time_str)
 
 
 def all_info(origin, destination):
-    finder = RouteFinder()
+    finder = RouteFinder(2)
     time_str, summary_route, detailed_route = finder.get_time_and_route(origin, destination)
     data = {}
     data["time"] = str(time_from_string(time_str))
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     else:
         origin = args.origin
         dest = args.dest
-    finder = RouteFinder()
+    finder = RouteFinder(2)
     time_str, summary_route, detailed_route = finder.get_time_and_route(origin, dest)
     finder.close()
     if not args.data_file and not args.route:

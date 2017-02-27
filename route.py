@@ -13,9 +13,6 @@ import signal
 
 MAX_SLEEP_TIME = 60
 
-class TimeoutException(Exception):
-    pass
-
 class RouteFinder:
     
     drivers = queue.Queue()
@@ -86,39 +83,13 @@ class RouteFinder:
             driver.quit()
         for display in RouteFinder.displays:
             display.stop()
-
-def cleanup():
-    """Make sure there isn't any lingering Xvfb or chrome processes around"""
-    # Find current proccess id
-    main_pid = os.getpid()
-    
-    # Get group process id
-    tree = subprocess.check_output("pstree -p " + str(main_pid), shell=True).decode(sys.stdout.encoding)
-    for line in tree.split("\n"):
-        matches = re.finditer(r'(\d+)', line)
-        for match in matches:
-            if int(match.group(1)) != main_pid:
-                try:
-                    os.kill(int(match.group(1)), signal.SIGTERM)
-                except Exception:
-                    pass
-
-def handler(signum, frame):
-    raise TimeoutException("")
     
 
 if __name__ == "__main__":
-    signal.signal(signal.SIGALRM, handler)
-    signal.alarm(30)
-    try:
-        router = RouteFinder(1)
-        time_str, summary_route, detailed_route = router.get_time_and_route("777+Mariners+Island+Blvd,+San+Mateo,+CA+94404", "5024+Ray+Ave,+Castro+Valley,+CA+94546")
-        print("Time: " + time_str)
-        print("Summary route: " + summary_route)
-        print("Detailed route:")
-        for line in detailed_route:
-            print(line)
-    except TimeoutException as exc:
-        print("Timed out while trying to run route: " + str(datetime.now()))
-    cleanup()
-
+    router = RouteFinder(1)
+    time_str, summary_route, detailed_route = router.get_time_and_route("777+Mariners+Island+Blvd,+San+Mateo,+CA+94404", "5024+Ray+Ave,+Castro+Valley,+CA+94546")
+    print("Time: " + time_str)
+    print("Summary route: " + summary_route)
+    print("Detailed route:")
+    for line in detailed_route:
+        print(line)

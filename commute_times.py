@@ -20,36 +20,41 @@ I have mine running through cron in the following command:
 '''
 
 import argparse
-import re
 from datetime import datetime
 import json
-from route import RouteFinder
 import os
-import subprocess
+import re
 import signal
+import subprocess
 import sys
 
+from route import RouteFinder
+
+
 DEBUG = False
+
 
 class TimeoutException(Exception):
     pass
 
+
 def get_time(origin, destination):
-    finder = RouteFinder(2)
+    finder = RouteFinder()
     time_str, _, _ = finder.get_time_and_route(origin, destination)
     return time_from_string(time_str)
 
 
 def all_info(origin, destination):
-    finder = RouteFinder(2)
-    time_str, summary_route, detailed_route = finder.get_time_and_route(origin, destination)
+    finder = RouteFinder()
+    time_str, summary_route, detailed_route = finder.get_time_and_route(
+        origin, destination)
     data = {}
     data["time"] = str(time_from_string(time_str))
     data["summary_route"] = summary_route
     better_detailed_route = map(lambda x: x.split("\n")[0], detailed_route)
     data["detailed_route"] = "||".join(better_detailed_route)
     return json.dumps(data)
-    
+
 
 def time_from_string(match):
     hours = 0
@@ -80,17 +85,20 @@ def write_route_to_file(file_name, shortest_time, summary_route, detailed_route)
         now_time = datetime.now().strftime("%Y-%m-%d,%H:%M")
         weekday = datetime.today().weekday()
         better_detailed_route = map(lambda x: x.split("\n")[0], detailed_route)
-        data_list = [now_time, weekday, time_str, time_from_string(time_str), summary_route, "||".join(better_detailed_route)]
+        data_list = [now_time, weekday, time_str, time_from_string(
+            time_str), summary_route, "||".join(better_detailed_route)]
         data_list = map(str, data_list)
         data.write(",".join(data_list) + "\n")
+
 
 def cleanup():
     """Make sure there isn't any lingering Xvfb or chrome processes around"""
     # Find current proccess id
     main_pid = os.getpid()
-    
+
     # Get group process id
-    tree = subprocess.check_output("pstree -p " + str(main_pid), shell=True).decode(sys.stdout.encoding)
+    tree = subprocess.check_output(
+        "pstree -p " + str(main_pid), shell=True).decode(sys.stdout.encoding)
     for line in tree.split("\n"):
         matches = re.finditer(r'(\d+)', line)
         for match in matches:
@@ -99,6 +107,7 @@ def cleanup():
                     os.kill(int(match.group(1)), signal.SIGTERM)
                 except Exception:
                     pass
+
 
 def handler(signum, frame):
     raise TimeoutException("")
@@ -112,7 +121,8 @@ if __name__ == '__main__':
         parser.add_argument("origin", help="Origin location")
         parser.add_argument("dest", help="Destination location")
         parser.add_argument("-s", "--switch", action="store_true")
-        parser.add_argument("-f", "--data_file", help="Append result to data file")
+        parser.add_argument(
+            "-f", "--data_file", help="Append result to data file")
         parser.add_argument("-r", "--route", help="Print the best route")
         args = parser.parse_args()
         if (args.switch):
@@ -122,17 +132,20 @@ if __name__ == '__main__':
             origin = args.origin
             dest = args.dest
         finder = RouteFinder(2)
-        time_str, summary_route, detailed_route = finder.get_time_and_route(origin, dest)
+        time_str, summary_route, detailed_route = finder.get_time_and_route(
+            origin, dest)
         finder.close()
         if not args.data_file and not args.route:
             print("Time: " + time_str)
             print("Summary route: " + summary_route)
-            better_detailed_route = map(lambda x: x.split("\n")[0], detailed_route)
+            better_detailed_route = map(
+                lambda x: x.split("\n")[0], detailed_route)
             print("Detailed route: " + "||".join(better_detailed_route))
         if args.data_file:
             write_time_to_file(args.data_file, time_from_string(time_str))
         if args.route:
-            write_route_to_file(args.route, time_str, summary_route, detailed_route)
+            write_route_to_file(
+                args.route, time_str, summary_route, detailed_route)
     except TimeoutException as exc:
         print("Timed out while trying to run route: " + str(datetime.now()))
     cleanup()

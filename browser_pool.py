@@ -13,7 +13,7 @@ import queue
 from browser import Browser
 
 MAX_CONCURRENT_BROWSERS = 3
-MAX_REUSES = 2
+MAX_REUSES = 4
 
 DEBUG = True
 
@@ -28,14 +28,23 @@ class BrowserPool:
 
     def get_browser(self):
         try:
-            return BrowserPool._browsers.get_nowait()
+            browser = BrowserPool._browsers.get_nowait()
+            if DEBUG:
+                print("Got allready created browser")
+            return browser
         except queue.Empty:
             if len(BrowserPool._current_browsers) < MAX_CONCURRENT_BROWSERS:
+                print("Created a new browser")
                 new_browser = Browser()
                 BrowserPool._current_browsers.append(new_browser)
                 return new_browser
             else:
-                return BrowserPool._browsers.get()
+                if DEBUG:
+                    print("Wait for a browser to be returned")
+                browser = BrowserPool._browsers.get()
+                if DEBUG:
+                    print("Done waiting for a browser")
+                return browser
 
     def return_browser(self, browser):
         if DEBUG:

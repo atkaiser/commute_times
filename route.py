@@ -78,3 +78,4 @@ if __name__ == "__main__":
     print("Detailed route:")
     for line in detailed_route:
         print(line)
+    router._browser_pool.close_all()

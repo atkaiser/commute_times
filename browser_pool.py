@@ -13,6 +13,9 @@ import queue
 from browser import Browser
 
 MAX_CONCURRENT_BROWSERS = 3
+MAX_REUSES = 4
+
+DEBUG = True
 
 
 class BrowserPool:
@@ -35,11 +38,22 @@ class BrowserPool:
                 return BrowserPool._browsers.get()
 
     def return_browser(self, browser):
-        print("Browser returned")
+        if DEBUG:
+            print("Browser returned")
         if (self._reuse_browser(browser)):
             BrowserPool._browsers.put(browser)
         else:
             BrowserPool._current_browsers.remove(browser)
 
     def _reuse_browser(self, browser):
+        if (browser.uses_count >= MAX_REUSES):
+            if DEBUG:
+                print("Not reusing browser")
+                print(
+                    "Current browser length: " + len(BrowserPool._current_browsers))
+            return False
         return True
+
+    def close_all(self):
+        for browser in self._current_browsers:
+            browser.close()

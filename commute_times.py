@@ -28,6 +28,7 @@ import signal
 import subprocess
 import sys
 
+from browser_pool import BrowserPool
 from route import RouteFinder
 
 
@@ -93,20 +94,24 @@ def write_route_to_file(file_name, shortest_time, summary_route, detailed_route)
 
 def cleanup():
     """Make sure there isn't any lingering Xvfb or chrome processes around"""
-    # Find current proccess id
-    main_pid = os.getpid()
+    browser_pool = BrowserPool()
+    browser_pool.close_all()
 
-    # Get group process id
-    tree = subprocess.check_output(
-        "pstree -p " + str(main_pid), shell=True).decode(sys.stdout.encoding)
-    for line in tree.split("\n"):
-        matches = re.finditer(r'(\d+)', line)
-        for match in matches:
-            if int(match.group(1)) != main_pid:
-                try:
-                    os.kill(int(match.group(1)), signal.SIGTERM)
-                except Exception:
-                    pass
+    # This was the old way I was doing it, but it wasn't working
+    # Find current proccess id
+#     main_pid = os.getpid()
+#
+#     # Get group process id
+#     tree = subprocess.check_output(
+#         "pstree -p " + str(main_pid), shell=True).decode(sys.stdout.encoding)
+#     for line in tree.split("\n"):
+#         matches = re.finditer(r'(\d+)', line)
+#         for match in matches:
+#             if int(match.group(1)) != main_pid:
+#                 try:
+#                     os.kill(int(match.group(1)), signal.SIGTERM)
+#                 except Exception:
+#                     pass
 
 
 def handler(signum, frame):

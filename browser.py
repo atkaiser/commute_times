@@ -30,20 +30,25 @@ class Browser:
         self._display_pid = self._display.pid
         self._driver_pid = self._driver.service.process.pid
 
+        print("Starting Xvfb with pid: {}".format(self._display_pid))
+        print("Starting chrome with pid: {}".format(self._driver_pid))
+
         self.uses_count = 0
 
     def close(self):
         """
         This should kill any processes that this object created.
         """
+        print("Stoping Xvfb with pid: {}".format(self._display_pid))
+        print("Stoping chrome with pid: {}".format(self._driver_pid))
         self._driver.quit()
         self._display.stop()
         try:
-            os.kill(self._driver_pid, signal.SIGTERM)
+            os.kill(self._driver_pid, signal.SIGKILL)
         except OSError:
             pass
         try:
-            os.kill(self._display_pid, signal.SIGTERM)
+            os.kill(self._display_pid, signal.SIGKILL)
         except OSError:
             pass
 

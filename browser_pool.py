@@ -44,6 +44,7 @@ class BrowserPool:
             BrowserPool._browsers.put(browser)
         else:
             BrowserPool._current_browsers.remove(browser)
+            browser.close()
 
     def _reuse_browser(self, browser):
         if (browser.uses_count >= MAX_REUSES):

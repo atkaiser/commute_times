@@ -50,7 +50,7 @@ class BrowserPool:
             if DEBUG:
                 print("Not reusing browser")
                 print(
-                    "Current browser length: " + len(BrowserPool._current_browsers))
+                    "Current browser length: {}".format(len(BrowserPool._current_browsers)))
             return False
         return True
 

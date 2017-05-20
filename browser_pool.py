@@ -13,7 +13,7 @@ import queue
 from browser import Browser
 
 MAX_CONCURRENT_BROWSERS = 3
-MAX_REUSES = 4
+MAX_REUSES = 20
 
 DEBUG = True
 

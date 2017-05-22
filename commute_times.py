@@ -136,10 +136,9 @@ if __name__ == '__main__':
         else:
             origin = args.origin
             dest = args.dest
-        finder = RouteFinder(2)
+        finder = RouteFinder()
         time_str, summary_route, detailed_route = finder.get_time_and_route(
             origin, dest)
-        finder.close()
         if not args.data_file and not args.route:
             print("Time: " + time_str)
             print("Summary route: " + summary_route)
@@ -153,4 +152,5 @@ if __name__ == '__main__':
                 args.route, time_str, summary_route, detailed_route)
     except TimeoutException as exc:
         print("Timed out while trying to run route: " + str(datetime.now()))
-    cleanup()
+    finally:
+        cleanup()

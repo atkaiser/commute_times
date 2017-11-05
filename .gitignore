@@ -7,3 +7,4 @@ config.py
 *.xlsx
 *.log
 data
+.DS_Store

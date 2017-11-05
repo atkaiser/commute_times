@@ -20,7 +20,9 @@ DEBUG = True
 
 class BrowserPool:
 
+    # Contains all the browsers that are sitting idle ready to be used
     _browsers = queue.Queue()
+    # Contains all the browsers created that haven't been destroyed
     _current_browsers = []
 
     def __init__(self):
@@ -63,6 +65,19 @@ class BrowserPool:
                     "Current browser length: {}".format(len(BrowserPool._current_browsers)))
             return False
         return True
+
+    def status(self):
+        status_lines = ["Number of browsers: {}".format(
+            len(self._current_browsers))]
+        for i, browser in enumerate(self._current_browsers):
+            status_lines.append("Browser {}".format(i))
+            status_lines.append(
+                "\t number of uses: {}".format(browser.uses_count))
+            status_lines.append(
+                "\t display pid: {}".format(browser._display_pid))
+            status_lines.append(
+                "\t driver pid: {}".format(browser._driver_pid))
+        return "\n".join(status_lines)
 
     def close_all(self):
         for browser in self._current_browsers:

@@ -34,12 +34,18 @@ class DirTimeWeb(object):
         return "Server is up"
 
     @cherrypy.expose
+    def pool(self):
+        browser_pool = BrowserPool()
+        return browser_pool.status()
+
+    @cherrypy.expose
     def time(self, origin, destination):
         return str(get_time(origin.replace(' ', '+'), destination.replace(' ', '+')))
 
     @cherrypy.expose
     def all_info(self, origin, destination):
         return all_info(origin.replace(' ', '+'), destination.replace(' ', '+'))
+
 
 if __name__ == '__main__':
     cherrypy.config.update({'server.socket_host': '0.0.0.0'})

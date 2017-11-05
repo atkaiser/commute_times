@@ -36,7 +36,12 @@ class DirTimeWeb(object):
     @cherrypy.expose
     def pool(self):
         browser_pool = BrowserPool()
-        return browser_pool.status()
+        return """<html>
+          <head></head>
+          <body style="white-space: pre-wrap;">
+            {}
+          </body>
+        </html>""".format(browser_pool.status())
 
     @cherrypy.expose
     def time(self, origin, destination):

@@ -38,9 +38,7 @@ class DirTimeWeb(object):
         browser_pool = BrowserPool()
         return """<html>
           <head></head>
-          <body style="white-space: pre-wrap;">
-            {}
-          </body>
+          <body style="white-space: pre-wrap;">{}</body>
         </html>""".format(browser_pool.status())
 
     @cherrypy.expose

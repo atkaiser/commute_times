@@ -30,9 +30,11 @@ class BrowserPool:
 
     def get_browser(self):
         try:
+            if DEBUG:
+                print("Looking for browser")
             browser = BrowserPool._browsers.get_nowait()
             if DEBUG:
-                print("Got allready created browser")
+                print("Got already created browser")
             return browser
         except queue.Empty:
             if len(BrowserPool._current_browsers) < MAX_CONCURRENT_BROWSERS:

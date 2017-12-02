@@ -27,16 +27,15 @@ import re
 import signal
 import subprocess
 import sys
+import time
 
 from browser_pool import BrowserPool
 from route import RouteFinder
+from timeout_utils import TimeoutException
+from timeout_utils import handler
 
 
 DEBUG = False
-
-
-class TimeoutException(Exception):
-    pass
 
 
 def get_time(origin, destination):
@@ -94,33 +93,34 @@ def write_route_to_file(file_name, shortest_time, summary_route, detailed_route)
 
 def cleanup():
     """Make sure there isn't any lingering Xvfb or chrome processes around"""
+    print("Cleaning up anything left over")
     browser_pool = BrowserPool()
     browser_pool.close_all()
 
-    # This was the old way I was doing it, but it wasn't working
+    # Sometimes the above doesn't work because we are opening a browser when a
+    # timeout happens so the pool doesn't know to close that browser
     # Find current proccess id
-#     main_pid = os.getpid()
-#
-#     # Get group process id
-#     tree = subprocess.check_output(
-#         "pstree -p " + str(main_pid), shell=True).decode(sys.stdout.encoding)
-#     for line in tree.split("\n"):
-#         matches = re.finditer(r'(\d+)', line)
-#         for match in matches:
-#             if int(match.group(1)) != main_pid:
-#                 try:
-#                     os.kill(int(match.group(1)), signal.SIGTERM)
-#                 except Exception:
-#                     pass
+    main_pid = os.getpid()
 
-
-def handler(signum, frame):
-    raise TimeoutException("")
+    # Get group process id
+    tree = subprocess.check_output(
+        "pstree -p " + str(main_pid), shell=True).decode(sys.stdout.encoding)
+    for line in tree.split("\n"):
+        matches = re.finditer(r'(\d+)', line)
+        for match in matches:
+            if int(match.group(1)) != main_pid:
+                try:
+                    os.kill(int(match.group(1)), signal.SIGTERM)
+                except Exception:
+                    pass
+    tree = subprocess.check_output(
+        "pstree -p " + str(main_pid), shell=True).decode(sys.stdout.encoding)
+    print(tree)
 
 
 if __name__ == '__main__':
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(30)
+    signal.alarm(2)
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("origin", help="Origin location")

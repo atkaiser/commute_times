@@ -3,6 +3,7 @@ import time
 import traceback
 
 from browser_pool import BrowserPool
+from timeout_utils import TimeoutException
 
 
 MAX_SLEEP_TIME = 60
@@ -17,6 +18,9 @@ class RouteFinder:
         url = "http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+" + \
               destination + "+from+" + origin
         browser = self._browser_pool.get_browser()
+        time_str = -1
+        summary_route = ""
+        detailed_route = ""
         try:
             driver = browser.get_driver()
             driver.get(url)
@@ -56,18 +60,17 @@ class RouteFinder:
             for elem in elems:
                 if elem.text:
                     detailed_route.append(elem.text)
+        except TimeoutException as exc:
+            # This can happen if we are running this in a command line program
+            # we want to pass this exception up
+            raise(exc)
         except Exception as e:
             print(e)
             traceback.print_exc(limit=100, file=sys.stdout)
         finally:
             self._browser_pool.return_browser(browser)
-        if not time_str:
-            time_str = -1
-        if not summary_route:
-            summary_route = ""
-        if not detailed_route:
-            detailed_route = ""
         return [time_str, summary_route, detailed_route]
+
 
 if __name__ == "__main__":
     router = RouteFinder()

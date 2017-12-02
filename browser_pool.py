@@ -9,8 +9,9 @@ YOU MUST CHECK IN A BROWSER AFTER USING IT.
 @author: akaiser
 '''
 
-import queue
 from browser import Browser
+import queue
+
 
 MAX_CONCURRENT_BROWSERS = 3
 MAX_REUSES = 20

@@ -120,7 +120,7 @@ def cleanup():
 
 if __name__ == '__main__':
     signal.signal(signal.SIGALRM, handler)
-    signal.alarm(2)
+    signal.alarm(30)
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("origin", help="Origin location")

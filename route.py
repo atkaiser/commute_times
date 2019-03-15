@@ -35,7 +35,12 @@ class RouteFinder:
                 if sleep_time > MAX_SLEEP_TIME:
                     raise Exception("Couldn't find Details button")
             elem = elems[0]
-            time.sleep(1)
+            sleep_time = 0
+            while not elem.is_displayed():
+                time.sleep(1)
+                sleep_time += 1
+                if sleep_time > MAX_SLEEP_TIME:
+                    raise Exception("Couldn't view Details button")
             elem.click()
             elems = driver.find_elements_by_xpath(
                 "//h1[@class='section-trip-summary-title']")

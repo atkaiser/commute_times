@@ -21,6 +21,7 @@ class Browser:
         Start up the browser and selenium driver and keep track of the
         process that they are using so that we can kill them later on.
         """
+        print("Trying to checkout a new browser")
         self._display = Display(visible=0, size=(1024, 768))
         self._display.start()
         self._driver = webdriver.Chrome()

@@ -27,10 +27,11 @@ class BrowserPool:
     _current_browsers = []
 
     def __init__(self):
-        for _ in range(MAX_CONCURRENT_BROWSERS):
-            print("Creating initial browsers")
-            new_browser = Browser()
-            BrowserPool._current_browsers.append(new_browser)
+        if (len(BrowserPool._current_browsers) < MAX_CONCURRENT_BROWSERS):
+            for _ in range(MAX_CONCURRENT_BROWSERS):
+                print("Creating initial browsers")
+                new_browser = Browser()
+                BrowserPool._current_browsers.append(new_browser)
 
     def get_browser(self):
         try:

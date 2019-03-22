@@ -13,8 +13,8 @@ from browser import Browser
 import queue
 
 
-MAX_CONCURRENT_BROWSERS = 3
-MAX_REUSES = 20
+MAX_CONCURRENT_BROWSERS = 2
+MAX_REUSES = 200000
 
 DEBUG = True
 
@@ -27,7 +27,10 @@ class BrowserPool:
     _current_browsers = []
 
     def __init__(self):
-        pass
+        for _ in range(MAX_CONCURRENT_BROWSERS):
+            print("Creating initial browsers")
+            new_browser = Browser()
+            BrowserPool._current_browsers.append(new_browser)
 
     def get_browser(self):
         try:
@@ -38,27 +41,27 @@ class BrowserPool:
                 print("Got already created browser")
             return browser
         except queue.Empty:
-            if len(BrowserPool._current_browsers) < MAX_CONCURRENT_BROWSERS:
-                print("Created a new browser")
-                new_browser = Browser()
-                BrowserPool._current_browsers.append(new_browser)
-                return new_browser
-            else:
-                if DEBUG:
-                    print("Wait for a browser to be returned")
-                browser = BrowserPool._browsers.get()
-                if DEBUG:
-                    print("Done waiting for a browser")
-                return browser
+            # if len(BrowserPool._current_browsers) < MAX_CONCURRENT_BROWSERS:
+            #     print("Created a new browser")
+            #     new_browser = Browser()
+            #     BrowserPool._current_browsers.append(new_browser)
+            #     return new_browser
+            # else:
+            if DEBUG:
+                print("Wait for a browser to be returned")
+            browser = BrowserPool._browsers.get()
+            if DEBUG:
+                print("Done waiting for a browser")
+            return browser
 
     def return_browser(self, browser):
         if DEBUG:
             print("Browser returned")
-        if (self._reuse_browser(browser)):
-            BrowserPool._browsers.put(browser)
-        else:
-            BrowserPool._current_browsers.remove(browser)
-            browser.close()
+        # if (self._reuse_browser(browser)):
+        BrowserPool._browsers.put(browser)
+        # else:
+        #     BrowserPool._current_browsers.remove(browser)
+        #     browser.close()
 
     def _reuse_browser(self, browser):
         if (browser.uses_count >= MAX_REUSES):

@@ -32,6 +32,7 @@ class BrowserPool:
                 print("Creating initial browsers")
                 new_browser = Browser()
                 BrowserPool._current_browsers.append(new_browser)
+                BrowserPool._browsers.put(new_browser)
 
     def get_browser(self):
         # try:

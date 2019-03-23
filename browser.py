@@ -35,6 +35,7 @@ class Browser:
         print("Starting chrome with pid: {}".format(self._driver_pid))
 
         self.uses_count = 0
+        self.checked_out = False
 
     def close(self):
         """

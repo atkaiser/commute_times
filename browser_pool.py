@@ -34,31 +34,33 @@ class BrowserPool:
                 BrowserPool._current_browsers.append(new_browser)
 
     def get_browser(self):
-        try:
-            if DEBUG:
-                print("Looking for browser")
-            browser = BrowserPool._browsers.get_nowait()
-            if DEBUG:
-                print("Got already created browser")
-            return browser
-        except queue.Empty:
+        # try:
+        #     if DEBUG:
+        #         print("Looking for browser")
+        #     browser = BrowserPool._browsers.get_nowait()
+        #     if DEBUG:
+        #         print("Got already created browser")
+        #     return browser
+        # except queue.Empty:
             # if len(BrowserPool._current_browsers) < MAX_CONCURRENT_BROWSERS:
             #     print("Created a new browser")
             #     new_browser = Browser()
             #     BrowserPool._current_browsers.append(new_browser)
             #     return new_browser
             # else:
-            if DEBUG:
-                print("Wait for a browser to be returned")
-            browser = BrowserPool._browsers.get()
-            if DEBUG:
-                print("Done waiting for a browser")
-            return browser
+        if DEBUG:
+            print("Wait for a browser to be returned")
+        browser = BrowserPool._browsers.get()
+        browser.checked_out = True
+        if DEBUG:
+            print("Done waiting for a browser")
+        return browser
 
     def return_browser(self, browser):
         if DEBUG:
             print("Browser returned")
         # if (self._reuse_browser(browser)):
+        browser.checked_out = False
         BrowserPool._browsers.put(browser)
         # else:
         #     BrowserPool._current_browsers.remove(browser)
@@ -84,6 +86,8 @@ class BrowserPool:
                 "\t display pid: {}".format(browser._display_pid))
             status_lines.append(
                 "\t driver pid: {}".format(browser._driver_pid))
+            status_lines.append(
+                "\t checked out: {}".format(browser.checked_out))
         return "\n".join(status_lines)
 
     def close_all(self):

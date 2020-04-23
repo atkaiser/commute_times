@@ -16,7 +16,7 @@ const destination = my_args[1];
     height: 1080
   });
   await page.goto('http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+' + destination + '+from+' + start);
-  const details_span = await page.waitForXPath('//span[text()="Details"]');
+  const details_span = await page.waitForXPath('//span[text()="Details"]', {visible: true});
   const details_button = (await details_span.$x('..'))[0];
   details_button.click();
   const time_element = await page.waitForXPath("//h1[@class='section-trip-summary-title']");

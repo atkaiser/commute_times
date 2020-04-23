@@ -1,0 +1,22 @@
+{
+  "name": "commute_times",
+  "version": "1.0.0",
+  "description": "Get the travel time between two destinations",
+  "main": "time.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atkaiser/commute_times.git"
+  },
+  "author": "Alex Kaiser",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/atkaiser/commute_times/issues"
+  },
+  "homepage": "https://github.com/atkaiser/commute_times#readme",
+  "dependencies": {
+    "puppeteer": "^3.0.1"
+  }
+}

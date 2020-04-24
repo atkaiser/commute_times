@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 User=akaiser
-ExecStart=/bin/bash -c 'cd /home/akaiser/dev/commute_times; source ~/.virtualenvs/commute_times/bin/activate; python web.py'
+ExecStart=/bin/bash -c 'cd /home/akaiser/dev/commute_times; /home/akaiser/.nvm/versions/node/v12.16.2/bin/node app.js'
 Restart=always
 
 [Install]

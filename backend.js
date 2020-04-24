@@ -16,7 +16,7 @@ async function get_time(start, destination) {
     const details_button = (await details_span.$x('..'))[0];
     details_button.click();
     const time_element = await page.waitForXPath("//h1[@class='section-trip-summary-title']");
-    time_str = await (await time_element.getProperty('innerText')).jsonValue();
+    time_str = min_from_string(await (await time_element.getProperty('innerText')).jsonValue());
     const summary_route_element = await page.waitForXPath("//h1[@class='section-directions-trip-title']");
     summary_route_str = await (await summary_route_element.getProperty('innerText')).jsonValue();
     const route_elements = await page.$x("//div[contains(@class, 'directions-mode-group') and not(contains(@class, 'directions-mode-group-summary'))]");
@@ -30,7 +30,7 @@ async function get_time(start, destination) {
   }
 
   await browser.close();
-  return {'time': time_str, 'summary_route': summary_route_str, 'detailed_route': route_details}
+  return {'time': time_str, 'summary_route': summary_route_str, 'detailed_route': route_details.join("||")}
 }
 
 function min_from_string(time_str) {
@@ -50,6 +50,5 @@ function min_from_string(time_str) {
 }
 
 module.exports = {
-  get_time,
-  min_from_string
+  get_time
 };

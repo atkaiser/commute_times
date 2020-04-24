@@ -17,17 +17,17 @@ app.get('/time', async (req, res) => {
   var origin = req.query.origin.replace(/ /g, '+');
   var destination = req.query.destination.replace(/ /g, '+');
   var response = await backend.get_time(origin, destination);
-  res.send(backend.min_from_string(response['time']).toString());
+  res.send(response['time'].toString());
 });
 
 app.get('/time_to_work', async (req, res) => {
   var response = await backend.get_time(home_address, work_address);
-  res.send(backend.min_from_string(response['time']).toString());
+  res.send(response['time'].toString());
 });
 
 app.get('/time_to_home', async (req, res) => {
   var response = await backend.get_time(work_address, home_address);
-  res.send(backend.min_from_string(response['time']).toString());
+  res.send(response['time'].toString());
 });
 
 app.get('/all_info', async (req, res) => {

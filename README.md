@@ -1,24 +1,15 @@
-A script to get the transit time between two locations.  Meant to be run many times to collect
-aggregate data at different times of the week.  Later it can be analyzed to determine what the best
-time to leave is. Run like:
+A collection of scripts to use headless chrome to query google maps for the time
+between two addresses, store the results long term and analyze those results.
 
-    commute_times.py [-s] [-f DATA_FILE] origin dest
+Installation:
+Requires python 3.7+ and node 12.16.2+ then just run:
+`npm install`
+`pip install -r requirements.txt`
 
-The -s flag will switch the origin and destination.
+The useful scripts are run like:
 
-I have mine running through cron in the following command:
+`node get_time_cli.js <start address> <destination addresss>`
+For example: `node get_time_cli.js 1+Dr+Carlton+B+Goodlett+Pl,+San+Francisco,+CA+94102 24+Willie+Mays+Plaza,+San+Francisco,+CA+94107`
 
-*/5 5-10 * * 1-5 \<path to python\> \<path to commute_times.py\> \<origin\> \<dest\> \<path to data file\>
-
-
-How to setup:
-
-sudo apt-get install xvfb
-<install chrome browser>
-
-pip install -r requirements.txt
-
-
-How to run the web service:
-
-nohup python web.py &> weblog.log &
+There is a web server that can be run to get the time between arbitrary addresses:
+`node app.js`

@@ -4,7 +4,9 @@ async function get_time(start, destination) {
   var time_str = "0";
   var summary_route_str = "";
   var route_details = [];
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({
+    userDataDir: './cached-data',
+  });
   try {
     const page = await browser.newPage();
     await page.setViewport({

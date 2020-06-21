@@ -1,5 +1,6 @@
 const express = require('express');
 const backend = require('./backend.js');
+const get_stocks = require('./get_stocks.js');
 const app = express();
 const port = 10000;
 
@@ -36,5 +37,10 @@ app.get('/all_info', async (req, res) => {
   var response = await backend.get_time(origin, destination);
   res.send(response);
 });
+
+app.get('/stocks', async (req, res) => {
+  var response = await get_stocks.get_sandp();
+  res.send(response);
+})
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))

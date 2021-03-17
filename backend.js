@@ -13,7 +13,7 @@ async function get_time(start, destination) {
       width: 1920,
       height: 1080
     });
-    await page.goto('http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+' + destination + '+from+' + start);
+    await page.goto('https://www.google.com/maps/dir/' + start+ '/' + destination);
     const details_span = await page.waitForXPath('//span[text()="Details"]', {visible: true});
     const details_button = (await details_span.$x('..'))[0];
     details_button.click();

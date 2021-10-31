@@ -16,11 +16,14 @@ async function get_time(start, destination) {
     });
     // await page.goto('http://maps.google.com/maps?f=q&source=s_q&hl=en&q=to+' + destination + '+from+' + start);
     const main_page_url = 'https://www.google.com/maps/dir/' + start + '/' + destination
+    console.log(main_page_url);
     await page.goto(main_page_url)
     const details_span = await page.waitForXPath('//span[text()="Details"]', {visible: true});
     const details_button = (await details_span.$x('..'))[0];
     details_button.click();
-    const time_element = await page.waitForXPath("//h1[@class='SHl48c-trip-HSrbLb-title']");
+    // const time_element = await page.waitForXPath("//h1[@class='SHl48c-trip-HSrbLb-title']");
+    // const time_element = await page.waitForXPath("//h1[@class='SHl48c-iSfDt-HSrbLb-title']");
+    const time_element = await page.waitForXPath("//h1[contains(@class, '-title')]");
     time_str = min_from_string(await (await time_element.getProperty('innerText')).jsonValue());
     const summary_route_element = await page.waitForXPath("//h1[@id='section-directions-trip-title-0']");
     summary_route_str = await (await summary_route_element.getProperty('innerText')).jsonValue();

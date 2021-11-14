@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 User=akaiser
-ExecStart=/bin/bash -c 'cd /home/akaiser/dev/commute_times; /home/akaiser/.nvm/versions/node/v12.16.2/bin/node app.js'
+ExecStart=/bin/bash -c 'cd /home/akaiser/dev/commute_times; /home/akaiser/.nvm/versions/node/v16.13.0/bin/node app.js'
 Restart=always
 
 [Install]

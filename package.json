@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/atkaiser/commute_times#readme",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "puppeteer": "11.0.0"
   }
 }
